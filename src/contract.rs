@@ -1,5 +1,5 @@
 use cosmwasm_std::{
-    entry_point, from_binary, CosmosMsg, DepsMut, Empty, Env, MessageInfo, Reply, Response, StdResult, SubMsg
+    entry_point, from_binary, CosmosMsg, DepsMut, Env, MessageInfo, Reply, Response, StdResult, SubMsg
 };
 use cw20::Cw20ReceiveMsg;
 

@@ -1,5 +1,5 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::{Binary, CosmosMsg, CustomQuery, SubMsg};
+use cosmwasm_std::{CosmosMsg, CustomQuery, SubMsg};
 use cw20::Cw20ReceiveMsg;
 
 #[cw_serde]
