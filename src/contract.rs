@@ -1,11 +1,11 @@
 use cosmwasm_std::{
-    entry_point, from_binary, CosmosMsg, DepsMut, Env, MessageInfo, Reply, Response, StdResult, SubMsg,
+    entry_point, from_binary, CosmosMsg, DepsMut, Empty, Env, MessageInfo, Reply, Response, StdResult, SubMsg
 };
 use cw20::Cw20ReceiveMsg;
 
 use crate::errors::ReflectError;
 use crate::msg::{
-    CustomMsg, ExecuteMsg, InstantiateMsg, SpecialQuery,
+    ExecuteMsg, InstantiateMsg, SpecialQuery,
 };
 
 #[entry_point]
@@ -14,7 +14,7 @@ pub fn instantiate(
     _env: Env,
     _info: MessageInfo,
     _msg: InstantiateMsg,
-) -> StdResult<Response<CustomMsg>> {
+) -> StdResult<Response> {
     Ok(Response::default())
 }
 
@@ -24,7 +24,7 @@ pub fn execute(
     env: Env,
     info: MessageInfo,
     msg: ExecuteMsg,
-) -> Result<Response<CustomMsg>, ReflectError> {
+) -> Result<Response, ReflectError> {
     match msg {
         ExecuteMsg::ReflectMsg { msgs } => try_reflect(deps, env, info, msgs),
         ExecuteMsg::ReflectSubMsg { msgs } => try_reflect_subcall(deps, env, info, msgs),
@@ -37,9 +37,8 @@ pub fn try_receive(
     _env: Env,
     _info: MessageInfo,
     msg: Cw20ReceiveMsg,
-) -> Result<Response<CustomMsg>, ReflectError> {
-    let unwrapped: CustomMsg = from_binary(&msg.msg)?;
-    
+) -> Result<Response, ReflectError> {
+    let unwrapped: CosmosMsg = from_binary(&msg.msg)?;
     Ok(Response::new().add_message(unwrapped))
 }
 
@@ -47,8 +46,8 @@ pub fn try_reflect(
     _deps: DepsMut<SpecialQuery>,
     _env: Env,
     _info: MessageInfo,
-    msgs: Vec<CosmosMsg<CustomMsg>>,
-) -> Result<Response<CustomMsg>, ReflectError> {
+    msgs: Vec<CosmosMsg>,
+) -> Result<Response, ReflectError> {
 
     if msgs.is_empty() {
         return Err(ReflectError::MessagesEmpty);
@@ -63,8 +62,8 @@ pub fn try_reflect_subcall(
     _deps: DepsMut<SpecialQuery>,
     _env: Env,
     _info: MessageInfo,
-    msgs: Vec<SubMsg<CustomMsg>>,
-) -> Result<Response<CustomMsg>, ReflectError> {
+    msgs: Vec<SubMsg>,
+) -> Result<Response, ReflectError> {
     if msgs.is_empty() {
         return Err(ReflectError::MessagesEmpty);
     }
